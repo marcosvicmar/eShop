@@ -1,0 +1,116 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:../db/sqlite.db"
+}
+
+model Users {
+  id       Int        @id @default(autoincrement())
+  email    String     @unique
+  name     String?
+  admin    Boolean    @default(false)
+  password String
+  Ratings  Ratings[]
+  Comments Comments[]
+  Orders   Orders[]
+  Carts    Carts[]
+}
+
+model Categories {
+  id          Int        @id @default(autoincrement())
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  name        String
+  description String?
+  Products    Products[]
+}
+
+model Products {
+  id          Int        @id @default(autoincrement())
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  name        String
+  description String?
+  price       Float
+  comments    Comments[]
+  ratings     Ratings[]
+  orders      OrdersLine[]
+  carts       CartsItem[]
+  category    Categories @relation(fields: [categoryId], references: [id])
+  categoryId  Int
+}
+
+model Ratings {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  rating    Float
+  author    Users    @relation(fields: [authorId], references: [id])
+  authorId  Int
+  product   Products @relation(fields: [productId], references: [id])
+  productId Int
+}
+
+model Comments {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  body      String
+  author    Users    @relation(fields: [authorId], references: [id]) 
+  authorId  Int
+  product   Products @relation(fields: [productId], references: [id])
+  productId Int
+}
+
+model Orders {
+  id          Int        @id @default(autoincrement())
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  userId      Int
+  status      String     @default("pending")
+
+  name        String
+  surname     String
+
+  address     String
+  province    String
+  city        String
+  postalCode  String
+  country     String
+  
+  user      Users      @relation(fields: [userId], references: [id])
+  orderLine OrdersLine[]
+}
+
+model OrdersLine {
+  id        Int        @id @default(autoincrement())
+  order     Orders     @relation(fields: [orderId], references: [id])
+  orderId   Int
+  product   Products   @relation(fields: [productId], references: [id])
+  productId Int
+  count     Int
+}
+
+model Carts {
+  id        Int        @id @default(autoincrement())
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  userId    Int
+  user      Users      @relation(fields: [userId], references: [id])
+  cartLine  CartsItem[]
+}
+
+model CartsItem {
+  id        Int        @id @default(autoincrement())
+  cart      Carts      @relation(fields: [cartId], references: [id])
+  cartId    Int
+  product   Products   @relation(fields: [productId], references: [id])
+  productId Int
+  count     Int
+}

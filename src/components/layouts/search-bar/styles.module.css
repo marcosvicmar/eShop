@@ -1,0 +1,17 @@
+.search-bar {
+  display: flex;
+  flex-direction: row;
+}
+
+.search-bar input[type="text"] {
+  flex: 1;
+  padding: 10px;
+}
+
+.search-bar button {
+  background-color: #000;
+  color: #fff;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+}

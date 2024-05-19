@@ -1,0 +1,2 @@
+import { ShopSkeleton } from "@/components";
+
